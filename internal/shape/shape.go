@@ -11,53 +11,63 @@ import (
 // Shape is a partition written as positive, nonincreasing parts.
 type Shape []int
 
-// Parse parses a shape, validating token syntax, part ranges, ordering, and size
-// in that order.
+// Parse parses a shape, validating token syntax, part and count ranges,
+// ordering, and size in that order. A token may be a run PARTxCOUNT.
 func Parse(text string) (Shape, error) {
-	parts := strings.Split(text, ",")
-	values := make([]int64, len(parts))
+	tokens := strings.Split(text, ",")
+	runs := make([]run, len(tokens))
 
 	// Validate every token's syntax before checking any semantic constraints.
-	for i, part := range parts {
-		value, err := base.ParseInt("part", part, 0, 9999999999)
-		if err != nil {
+	for i, token := range tokens {
+		r, ok := readRun(token)
+		if !ok {
 			return nil, base.Fail("invalid shape " + base.Show(text) +
 				" (expected parts such as 5,3,1, or 0 for the empty shape)")
 		}
-		values[i] = value
+		runs[i] = r
 	}
 
 	if text == "0" {
 		return Shape{}, nil
 	}
 
-	for i, value := range values {
-		if value < 1 || value > 5000 {
-			return nil, base.Fail("invalid part " + base.Show(parts[i]) +
+	for _, r := range runs {
+		if r.part < 1 || r.part > 5000 {
+			return nil, base.Fail("invalid part " + base.Show(r.partText) +
+				" in " + base.Show(text) + " (expected 1 to 5000)")
+		}
+		if r.count < 1 || r.count > 5000 {
+			return nil, base.Fail("invalid count " + base.Show(r.countText) +
 				" in " + base.Show(text) + " (expected 1 to 5000)")
 		}
 	}
 
-	for i := 1; i < len(values); i++ {
-		if values[i] > values[i-1] {
+	position := int64(0)
+	for i, r := range runs {
+		if i > 0 && r.part > runs[i-1].part {
 			return nil, base.Fail("parts of " + base.Show(text) +
-				" must not increase (part " + strconv.Itoa(i+1) + " is " +
-				parts[i] + ", after " + parts[i-1] + ")")
+				" must not increase (part " + strconv.FormatInt(position+1, 10) +
+				" is " + r.partText + ", after " + runs[i-1].partText + ")")
 		}
+		position += r.count
 	}
 
 	var total big.Int
-	for _, value := range values {
-		total.Add(&total, big.NewInt(value))
+	for _, r := range runs {
+		var product big.Int
+		product.Mul(big.NewInt(r.part), big.NewInt(r.count))
+		total.Add(&total, &product)
 	}
 	if total.Cmp(big.NewInt(5000)) > 0 {
 		return nil, base.Fail("shape " + base.Show(text) + " has size " +
 			total.String() + " (above 5000)")
 	}
 
-	result := make(Shape, len(values))
-	for i, value := range values {
-		result[i] = int(value)
+	result := Shape{}
+	for _, r := range runs {
+		for j := int64(0); j < r.count; j++ {
+			result = append(result, int(r.part))
+		}
 	}
 	return result, nil
 }
