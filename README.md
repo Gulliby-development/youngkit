@@ -41,6 +41,8 @@ For `rsk`, provide permutation entries as arguments, or use `-` as the sole argu
 
 A shape is written as comma-separated, positive, nonincreasing parts, for example `5,3,3,1`. The notation `0` denotes the empty shape. Parts must be canonical integers: malformed notation such as a leading-zero part (`03`), a trailing comma, or an empty shape string is rejected.
 
+A run of equal parts may be written `PARTxCOUNT` with the lowercase letter `x`: `4,3x2,1` is `4,3,3,1`, `2x3` is `2,2,2` and `3x1` is `3`. PART and COUNT are canonical integers, COUNT runs from 1 to 5000, and the total size limit is unchanged. Every command that takes a shape accepts the run notation and prints the parts spelled out; `0` stays the only spelling of the empty shape, so `0x1` is rejected as a zero part.
+
 A tableau is written with slash-separated rows and comma-separated entries, for example `1,3,5/2,4/6`; `0` denotes the empty tableau. Standard tableaux contain each integer from 1 through the tableau's size exactly once, with entries increasing from left to right in every row and from top to bottom in every column. Empty rows, malformed entries and tableaux that fail these conditions are rejected.
 
 Counts and ranks are exact integers. Shape and tableau commands accept `0` for their empty object; its printed form is also `0`.
