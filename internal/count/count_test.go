@@ -370,7 +370,7 @@ func TestRunUnrankChecksNBeforeMalformedRank(t *testing.T) {
 }
 
 func TestAdaptersUsageAndOptionErrors(t *testing.T) {
-	checkPartitionRun(t, cli.RunCount, nil, "", "usage: youngkit count N [--max-part K] [--distinct]")
+	checkPartitionRun(t, cli.RunCount, nil, "", "usage: youngkit count N [--max-part K] [--largest K] [--distinct]")
 	checkPartitionRun(t, cli.RunList, nil, "", "usage: youngkit list N [--max-part K] [--limit L]")
 	checkPartitionRun(t, cli.RunRank, nil, "", "usage: youngkit rank SHAPE")
 	checkPartitionRun(t, cli.RunUnrank, nil, "", "usage: youngkit unrank N RANK")

@@ -214,7 +214,7 @@ func TestDocumentationUsageLinesMatchNoArgumentDiagnostics(t *testing.T) {
 		line string
 		args []string
 	}{
-		{"youngkit count N [--max-part K] [--distinct]", []string{"count"}},
+		{"youngkit count N [--max-part K] [--largest K] [--distinct]", []string{"count"}},
 		{"youngkit list N [--max-part K] [--limit L]", []string{"list"}},
 		{"youngkit rank SHAPE", []string{"rank"}},
 		{"youngkit unrank N RANK", []string{"unrank"}},

@@ -21,7 +21,7 @@ This creates the `youngkit` executable in the current directory.
 The command has twelve subcommands. Their usage forms are:
 
 ```text
-youngkit count N [--max-part K] [--distinct]
+youngkit count N [--max-part K] [--largest K] [--distinct]
 youngkit list N [--max-part K] [--limit L]
 youngkit rank SHAPE
 youngkit unrank N RANK
@@ -49,7 +49,7 @@ Counts and ranks are exact integers. Shape and tableau commands accept `0` for t
 
 ## Commands
 
-`count` counts partitions of a nonnegative integer, optionally limiting the largest part and requiring distinct parts.
+`count` counts partitions of a nonnegative integer, optionally limiting the largest part and requiring distinct parts. `--largest K` instead counts the partitions whose largest part is exactly `K`, and an extra `largest` line shows `K`; it cannot be combined with `--max-part`.
 
 `list` prints the first partitions in reverse lexicographic order, with an optional largest-part bound and result limit.
 
