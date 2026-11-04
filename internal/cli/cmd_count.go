@@ -12,6 +12,7 @@ import (
 func RunCount(args []string, io base.IO) (string, error) {
 	specs := []base.Spec{
 		{Name: "--max-part", Lo: 1, Hi: 5000, Fallback: 0},
+		{Name: "--largest", Lo: 1, Hi: 5000, Fallback: 0},
 		{Name: "--distinct", Flag: true},
 	}
 	parsed, err := base.Parse(args, specs)
@@ -19,12 +20,16 @@ func RunCount(args []string, io base.IO) (string, error) {
 		return "", err
 	}
 	if len(parsed.Args) != 1 {
-		return "", base.Fail("usage: youngkit count N [--max-part K] [--distinct]")
+		return "", base.Fail("usage: youngkit count N [--max-part K] [--largest K] [--distinct]")
 	}
 
 	n, err := base.ParseInt("n", parsed.Args[0], 0, 5000)
 	if err != nil {
 		return "", err
+	}
+	largest := parsed.Values["--largest"]
+	if largest != 0 && parsed.Values["--max-part"] != 0 {
+		return "", base.Fail("--largest and --max-part exclude each other")
 	}
 
 	displayedMaxPart := "any"
@@ -45,7 +50,11 @@ func RunCount(args []string, io base.IO) (string, error) {
 		base.Line("n", strconv.FormatInt(n, 10)),
 		base.Line("max-part", displayedMaxPart),
 		base.Line("distinct", distinctText),
-		base.Line("count", total.String()),
 	}
+	if largest != 0 {
+		total = count.PartitionsWithLargest(int(n), int(largest), distinct)
+		lines = append(lines, base.Line("largest", strconv.FormatInt(largest, 10)))
+	}
+	lines = append(lines, base.Line("count", total.String()))
 	return strings.Join(lines, "\n") + "\n", nil
 }

@@ -94,7 +94,7 @@ func TestEveryCommandReportsItsExactUsageLine(t *testing.T) {
 		args []string
 		want string
 	}{
-		{[]string{"count"}, "usage: youngkit count N [--max-part K] [--distinct]"},
+		{[]string{"count"}, "usage: youngkit count N [--max-part K] [--largest K] [--distinct]"},
 		{[]string{"list"}, "usage: youngkit list N [--max-part K] [--limit L]"},
 		{[]string{"rank"}, "usage: youngkit rank SHAPE"},
 		{[]string{"unrank"}, "usage: youngkit unrank N RANK"},
@@ -176,7 +176,7 @@ func TestOptionsAreCheckedBeforeArityAndPositionalParsing(t *testing.T) {
 		"invalid --max-part \"0\" (expected an integer from 1 to 5000)", 0)
 	requireDispatchError(t, []string{"count", "--unknown"}, nil, "unknown option \"--unknown\"", 0)
 	requireDispatchError(t, []string{"count", "bad", "extra"}, nil,
-		"usage: youngkit count N [--max-part K] [--distinct]", 0)
+		"usage: youngkit count N [--max-part K] [--largest K] [--distinct]", 0)
 	requireDispatchError(t, []string{"rank", "2,3", "extra"}, nil, "usage: youngkit rank SHAPE", 0)
 }
 
